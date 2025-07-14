@@ -1275,7 +1275,15 @@
                     submitBtn.textContent = 'Transmitting...';
                     submitBtn.disabled = true;
                     
-                    // Reset button after a short delay (form will submit normally)
+                    // Store form data before reset
+                    const formData = new FormData(this);
+                    
+                    // Reset the form immediately
+                    setTimeout(() => {
+                        contactForm.reset();
+                    }, 100);
+                    
+                    // Reset button after a short delay
                     setTimeout(() => {
                         submitBtn.textContent = originalText;
                         submitBtn.disabled = false;
