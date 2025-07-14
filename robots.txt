@@ -1,0 +1,22 @@
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://bakunawastudios.com/sitemap.xml
+
+# Optional: Block any future admin or private directories
+# Disallow: /admin/
+# Disallow: /private/
+
+# Allow social media crawlers
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
+# Crawl delay (optional - gives your server a break)
+Crawl-delay: 1
