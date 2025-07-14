@@ -356,10 +356,10 @@
         #sky h1 {
             font-family: var(--font-heading);
             color: var(--lunar-silver);
-            font-size: clamp(2.7rem, 6vw, 4rem);
+            font-size: clamp(3rem, 6vw, 4.5rem);
             font-weight: 700;
             line-height: 1.1;
-            margin: 0 0 -10px 0;
+            margin: 0 0 20px 0;
             text-shadow: 0 0 20px rgba(0, 246, 255, 0.3), 0 0 40px rgba(0, 246, 255, 0.1);
             background: linear-gradient(90deg, var(--bioluminescent-cyan), white);
             background-clip: text;
@@ -860,9 +860,19 @@
             color: var(--ethereal-glow);
         }
 
-        .btn-secondary:hover {
-            background: var(--ethereal-glow);
-            color: var(--deep-sea);
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .btn:disabled:hover {
+            background: linear-gradient(45deg, transparent, rgba(0, 246, 255, 0.1));
+            color: var(--lunar-silver);
+            border-color: var(--lunar-silver);
+            transform: none;
+            box-shadow: none;
         }
 
         /* --- Footer --- */
@@ -997,7 +1007,7 @@
         <ul>
             <li><a href="#eclipse">The Eclipse</a></li>
             <li><a href="#abyss">The Abyss</a></li>
-            <li><a href="#contact">The Depths</a></li>
+            <li><a href="#contact">Open Channel</a></li>
         </ul>
     </nav>
 
@@ -1083,7 +1093,7 @@
                     <div class="contact-form">
                         <h3>Send Message to the Abyss</h3>
                         <p>Share your visions with us. Game name ideas, feedback, collaboration proposals, or tales from your own creative depths.</p>
-                        <form action="https://api.web3forms.com/submit" method="POST">
+                        <form action="https://api.web3forms.com/submit" method="POST" id="contact-form">
                             <!-- Web3Forms Access Key -->
                             <input type="hidden" name="access_key" value="a9c03fe1-6290-4e55-842f-596ea67aada2">
                             
@@ -1115,7 +1125,7 @@
                             <!-- Honeypot Spam Protection -->
                             <input type="checkbox" name="botcheck" style="display: none;">
                             
-                            <button type="submit" class="btn btn-primary">Transmit to the Depths</button>
+                            <button type="submit" id="submit-btn" class="btn btn-primary">Transmit to the Depths</button>
                         </form>
                     </div>
                 </div>
@@ -1253,6 +1263,59 @@
                 }
             `;
             document.head.appendChild(style);
+
+            // --- Contact Form Handling ---
+            const contactForm = document.getElementById('contact-form');
+            const submitBtn = document.getElementById('submit-btn');
+            
+            if (contactForm) {
+                contactForm.addEventListener('submit', function(e) {
+                    // Prevent default form submission temporarily
+                    e.preventDefault();
+                    
+                    // Change button text and disable it
+                    const originalText = submitBtn.textContent;
+                    submitBtn.textContent = 'Transmitting...';
+                    submitBtn.disabled = true;
+                    
+                    // Create FormData object
+                    const formData = new FormData(this);
+                    
+                    // Submit the form via fetch
+                    fetch(this.action, {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            // Reset the form
+                            contactForm.reset();
+                        } else {
+                            throw new Error('Form submission failed');
+                        }
+                    })
+                    .catch(error => {
+                        // Show error message
+                        const errorMessage = document.createElement('div');
+                        errorMessage.className = 'message error';
+                        errorMessage.textContent = 'Transmission failed. The abyss seems unreachable. Please try again.';
+                        contactForm.insertBefore(errorMessage, contactForm.firstChild);
+                        
+                        // Remove error message after 5 seconds
+                        setTimeout(() => {
+                            if (errorMessage.parentNode) {
+                                errorMessage.remove();
+                            }
+                        }, 5000);
+                    })
+                    .finally(() => {
+                        // Reset button state
+                        submitBtn.textContent = originalText;
+                        submitBtn.disabled = false;
+                        submitBtn.blur(); // Remove focus/selection from button
+                    });
+                });
+            }
         });
     </script>
 </body>
